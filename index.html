@@ -3,46 +3,192 @@
 <head>
   <meta charset="UTF-8">
   <title>david Meme Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Particles.js library -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       font-family: Arial, sans-serif;
+      background: #330000; /* Dark red background */
+      color: #fff;
+    }
+    /* Particle background covering entire screen */
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #330000;
+    }
+    /* Top configuration bar for title */
+    header {
+      background: rgba(0, 0, 0, 0.6);
+      border-bottom: 1px solid #660000;
+      padding: 10px;
       text-align: center;
-      margin: 20px;
     }
-    canvas {
-      margin-top: 20px;
-      border: 1px solid #ccc;
+    /* Container for left settings and preview */
+    .container {
+      display: flex;
+      height: calc(100% - 60px); /* Adjust height based on header */
     }
-    input[type="text"] {
+    /* Left settings column */
+    .settings {
       width: 300px;
-      font-size: 16px;
-      padding: 5px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-right: 1px solid #660000;
+      overflow-y: auto;
     }
-    button {
+    .settings input[type="text"],
+    .settings input[type="file"],
+    .settings input[type="range"],
+    .settings button {
+      width: 100%;
+      margin-bottom: 15px;
       font-size: 16px;
-      padding: 8px 16px;
-      margin-top: 10px;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+    }
+    .settings input[type="text"],
+    .settings input[type="file"] {
+      background: #fff;
+      color: #000;
+    }
+    .settings button {
+      background: #8B0000;
+      color: #fff;
       cursor: pointer;
+    }
+    .settings button:hover {
+      background: #a30000;
+    }
+    .settings label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    /* Middle preview area */
+    .preview {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+    /* The canvas fills the preview area */
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
     }
   </style>
 </head>
 <body>
-  <h1>Meme Generator</h1>
-  <!-- Image upload input -->
-  <input type="file" id="imageInput" accept="image/*">
-  <br><br>
-  <!-- Text inputs for meme captions -->
-  <input type="text" id="topText" placeholder="Enter top text">
-  <br><br>
-  <input type="text" id="bottomText" placeholder="Enter bottom text">
-  <br><br>
-  <!-- Button to generate the meme -->
-  <button id="generateBtn">Generate Meme</button>
-  <br><br>
-  <!-- Canvas where the meme will be drawn -->
-  <canvas id="memeCanvas"></canvas>
+  <!-- Particle background container -->
+  <div id="particles-js"></div>
+  
+  <!-- Top configuration bar with title -->
+  <header>
+    <h1>david Meme Generator <a href="https://forms.office.com/r/ZErYcvSL6N">(return to homepage)</a></h1>
+  </header>
+
+  <!-- Main container for settings and preview -->
+  <div class="container">
+    <!-- Left column for settings -->
+    <div class="settings">
+      <!-- Image upload input -->
+      <input type="file" id="imageInput" accept="image/*">
+      <!-- Text inputs for meme captions -->
+      <input type="text" id="topText" placeholder="Enter top text">
+      <input type="text" id="bottomText" placeholder="Enter bottom text">
+      
+      <!-- Sliders for adjusting font sizes -->
+      <label for="topFontSlider">Top Font Size</label>
+      <input type="range" id="topFontSlider" min="10" max="100" value="30">
+      <label for="bottomFontSlider">Bottom Font Size</label>
+      <input type="range" id="bottomFontSlider" min="10" max="100" value="30">
+      
+      <!-- Button to generate the meme -->
+      <button id="generateBtn">Generate Meme</button>
+    </div>
+    <!-- Middle area for preview -->
+    <div class="preview">
+      <canvas id="memeCanvas"></canvas>
+    </div>
+  </div>
 
   <script>
+    // Initialize particles.js with a dark red particle configuration
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#8B0000"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000"
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": false
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#8B0000",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out"
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": false
+          },
+          "onclick": {
+            "enable": false
+          }
+        },
+        "modes": {}
+      },
+      "retina_detect": true
+    });
+
     const imageInput = document.getElementById('imageInput');
     const topText = document.getElementById('topText');
     const bottomText = document.getElementById('bottomText');
@@ -51,7 +197,11 @@
     const ctx = canvas.getContext('2d');
     let image = new Image();
 
-    // When an image is uploaded, load it into the Image object
+    // Get slider elements
+    const topFontSlider = document.getElementById('topFontSlider');
+    const bottomFontSlider = document.getElementById('bottomFontSlider');
+
+    // Load the uploaded image
     imageInput.addEventListener('change', function() {
       const file = imageInput.files[0];
       if (!file) return;
@@ -62,39 +212,68 @@
       reader.readAsDataURL(file);
     });
 
-    // Redraw the canvas when the image loads
+    // When the image loads, redraw the meme in the preview area
     image.onload = function() {
-      canvas.width = image.width;
-      canvas.height = image.height;
       drawMeme();
     };
 
-    // Function to draw the image and overlay text
+    // Redraw on window resize to ensure canvas always fills the preview area
+    window.addEventListener('resize', function() {
+      if (image.src) drawMeme();
+    });
+
+    // Redraw when slider values change
+    topFontSlider.addEventListener('input', function() {
+      if (image.src) drawMeme();
+    });
+    bottomFontSlider.addEventListener('input', function() {
+      if (image.src) drawMeme();
+    });
+
+    // Function to draw the image and overlay text with padding
     function drawMeme() {
-      // Clear previous canvas content
+      const preview = document.querySelector('.preview');
+      canvas.width = preview.clientWidth;
+      canvas.height = preview.clientHeight;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Draw the image
-      ctx.drawImage(image, 0, 0);
+
+      // Set padding for UI enhancements
+      const padding = 20;
+      const innerWidth = canvas.width - 2 * padding;
+      const innerHeight = canvas.height - 2 * padding;
+
+      // "Contain" technique: scale the image so the entire image is visible
+      const scale = Math.min(innerWidth / image.width, innerHeight / image.height);
+      const drawWidth = image.width * scale;
+      const drawHeight = image.height * scale;
+      const offsetX = padding + (innerWidth - drawWidth) / 2;
+      const offsetY = padding + (innerHeight - drawHeight) / 2;
       
-      // Set text styles
-      const fontSize = Math.floor(canvas.width / 10);
-      ctx.font = `bold ${fontSize}px Impact`;
+      ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+
+      // Get font sizes from sliders
+      const topFontSize = parseInt(topFontSlider.value, 10);
+      const bottomFontSize = parseInt(bottomFontSlider.value, 10);
+
+      // Set text properties and draw top text
+      const topTextInput = topText.value.toUpperCase();
+      ctx.font = `bold ${topFontSize}px Impact`;
       ctx.fillStyle = 'white';
       ctx.strokeStyle = 'black';
-      ctx.lineWidth = fontSize / 20;
+      ctx.lineWidth = topFontSize / 20;
       ctx.textAlign = 'center';
-      
-      // Draw top text
-      const topTextInput = topText.value.toUpperCase();
       ctx.textBaseline = 'top';
-      ctx.fillText(topTextInput, canvas.width / 2, 10);
-      ctx.strokeText(topTextInput, canvas.width / 2, 10);
-      
-      // Draw bottom text
+      ctx.fillText(topTextInput, canvas.width / 2, padding + 10);
+      ctx.strokeText(topTextInput, canvas.width / 2, padding + 10);
+
+      // Set text properties and draw bottom text
       const bottomTextInput = bottomText.value.toUpperCase();
+      ctx.font = `bold ${bottomFontSize}px Impact`;
+      ctx.lineWidth = bottomFontSize / 20;
       ctx.textBaseline = 'bottom';
-      ctx.fillText(bottomTextInput, canvas.width / 2, canvas.height - 10);
-      ctx.strokeText(bottomTextInput, canvas.width / 2, canvas.height - 10);
+      ctx.fillText(bottomTextInput, canvas.width / 2, canvas.height - padding - 10);
+      ctx.strokeText(bottomTextInput, canvas.width / 2, canvas.height - padding - 10);
     }
 
     // When the "Generate Meme" button is clicked, redraw the meme
